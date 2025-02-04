@@ -5,7 +5,7 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 @Component({
   selector: 'app-wheel-of-drinking',
   templateUrl: './wheel-of-drinking.component.html',
-  styleUrls: ['./wheel-of-drinking.component.scss'],
+  styleUrls: ['./wheel-of-drinking.component.css'],
   imports: [FontAwesomeModule]
 })
 export class WheelOfDrinkingComponent {

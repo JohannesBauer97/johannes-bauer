@@ -5,7 +5,7 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 @Component({
   selector: 'app-daylight',
   templateUrl: './daylight.component.html',
-  styleUrls: ['./daylight.component.scss'],
+  styleUrls: ['./daylight.component.css'],
   imports: [FontAwesomeModule]
 })
 export class DaylightComponent {

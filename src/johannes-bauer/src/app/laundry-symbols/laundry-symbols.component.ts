@@ -5,7 +5,7 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 @Component({
   selector: 'app-laundry-symbols',
   templateUrl: './laundry-symbols.component.html',
-  styleUrls: ['./laundry-symbols.component.scss'],
+  styleUrls: ['./laundry-symbols.component.css'],
   imports: [FontAwesomeModule]
 })
 export class LaundrySymbolsComponent {
