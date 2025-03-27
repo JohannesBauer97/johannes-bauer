@@ -10,6 +10,7 @@ import {DaylightComponent} from './daylight/daylight.component';
 import {LaundrySymbolsComponent} from './laundry-symbols/laundry-symbols.component';
 import {WheelOfDrinkingComponent} from './wheel-of-drinking/wheel-of-drinking.component';
 import {ServiceWorkerModule} from '@angular/service-worker';
+import {CaveMapComponent} from "./cave-map/cave-map.component";
 
 @NgModule({
   declarations: [AppComponent],
@@ -22,6 +23,7 @@ import {ServiceWorkerModule} from '@angular/service-worker';
     DaylightComponent,
     LaundrySymbolsComponent,
     WheelOfDrinkingComponent,
+    CaveMapComponent,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),
       // Register the ServiceWorker as soon as the application is stable
