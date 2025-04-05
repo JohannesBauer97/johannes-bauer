@@ -24,3 +24,7 @@ npx npm-check-updates --peer -u
 ```bash
 npm i
 ```
+7. Check if everything builds
+```bash
+npm run build
+```
