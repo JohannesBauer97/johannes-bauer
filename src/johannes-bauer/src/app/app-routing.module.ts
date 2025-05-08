@@ -8,6 +8,7 @@ import {WheelOfDrinkingComponent} from "./wheel-of-drinking/wheel-of-drinking.co
 import {ImprintComponent} from "./imprint/imprint.component";
 import {PrivacyComponent} from "./privacy/privacy.component";
 import {CaveMapComponent} from "./cave-map/cave-map.component";
+import {VentifyComponent} from "./ventify/ventify.component";
 
 const routes: Routes = [
   {path: '', component: HomepageComponent},
@@ -18,6 +19,7 @@ const routes: Routes = [
   {path: 'laundry', component: LaundrySymbolsComponent},
   {path: 'partywheel', component: WheelOfDrinkingComponent},
   {path: 'cavemap', component: CaveMapComponent},
+  {path: 'ventify', component: VentifyComponent},
   {path: 'daylight-app', redirectTo: 'daylight'},
   {path: 'impress', redirectTo: 'imprint'},
   {path: '**', redirectTo: ''}
