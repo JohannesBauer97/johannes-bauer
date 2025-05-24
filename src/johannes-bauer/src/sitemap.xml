@@ -6,28 +6,38 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://johannes-bauer.de/imprint</loc>
+    <loc>https://johannes-bauer.de/?/imprint</loc>
     <lastmod>2025-01-12</lastmod>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://johannes-bauer.de/terms-and-conditions</loc>
+    <loc>https://johannes-bauer.de/?/terms-and-conditions</loc>
     <lastmod>2025-01-12</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://johannes-bauer.de/daylight</loc>
+    <loc>https://johannes-bauer.de/?/daylight</loc>
     <lastmod>2025-01-12</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://johannes-bauer.de/laundry</loc>
+    <loc>https://johannes-bauer.de/?/laundry</loc>
     <lastmod>2025-01-12</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://johannes-bauer.de/partywheel</loc>
+    <loc>https://johannes-bauer.de/?/partywheel</loc>
     <lastmod>2025-01-12</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://johannes-bauer.de/?/cavemap</loc>
+    <lastmod>2025-05-24</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://johannes-bauer.de/?/ventify</loc>
+    <lastmod>2025-05-24</lastmod>
     <priority>0.7</priority>
   </url>
 </urlset>

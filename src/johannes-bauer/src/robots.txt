@@ -1,2 +1,3 @@
+Sitemap: https://johannes-bauer.de/sitemap.xml
 User-agent: *
 Allow: /
