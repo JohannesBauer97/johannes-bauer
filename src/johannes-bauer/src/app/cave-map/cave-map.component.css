@@ -1,0 +1,17 @@
+h1 {
+  font-size: 1.875rem;    /* Tailwind text-3xl */
+  line-height: 2.25rem;   /* tailwind: leading-9 (entspricht text-3xl) */
+  font-weight: 700;       /* font-bold */
+  margin-bottom: 1rem;    /* mb-4 */
+}
+
+h2 {
+  font-size: 1.5rem;      /* Tailwind text-2xl */
+  line-height: 2rem;      /* tailwind: leading-8 (entspricht text-2xl) */
+  font-weight: 600;       /* font-semibold */
+  margin-bottom: 0.5rem;  /* mb-2 */
+}
+
+p {
+  margin-bottom: 1rem;    /* mb-4 */
+}
