@@ -5,9 +5,7 @@ import {ChangeDetectionStrategy, Component} from '@angular/core';
   imports: [],
   templateUrl: './ventify.component.html',
   styleUrl: './ventify.component.css',
-  // TODO: This component has been partially migrated to be zoneless-compatible.
-  // After testing, this should be updated to ChangeDetectionStrategy.OnPush.
-  changeDetection: ChangeDetectionStrategy.Default
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class VentifyComponent {
 

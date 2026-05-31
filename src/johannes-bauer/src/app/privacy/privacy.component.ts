@@ -5,9 +5,7 @@ import {ChangeDetectionStrategy, Component} from '@angular/core';
   imports: [],
   templateUrl: './privacy.component.html',
   styleUrl: './privacy.component.css',
-  // TODO: This component has been partially migrated to be zoneless-compatible.
-  // After testing, this should be updated to ChangeDetectionStrategy.OnPush.
-  changeDetection: ChangeDetectionStrategy.Default
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PrivacyComponent {
 

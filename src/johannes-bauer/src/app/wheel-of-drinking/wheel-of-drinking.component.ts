@@ -7,9 +7,7 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
   templateUrl: './wheel-of-drinking.component.html',
   styleUrls: ['./wheel-of-drinking.component.css'],
   imports: [FontAwesomeModule],
-  // TODO: This component has been partially migrated to be zoneless-compatible.
-  // After testing, this should be updated to ChangeDetectionStrategy.OnPush.
-  changeDetection: ChangeDetectionStrategy.Default
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WheelOfDrinkingComponent {
   protected readonly faAppStore = faAppStoreIos;
