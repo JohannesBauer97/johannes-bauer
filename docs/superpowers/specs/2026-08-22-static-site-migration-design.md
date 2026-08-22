@@ -26,7 +26,7 @@ Bestehende Abhängigkeiten, die entfallen:
 | Angular 22 (Core, Router, Platform) | Bootstrapping, Routing | Echte Dateien und Verzeichnisse |
 | Tailwind CSS v4 + PostCSS | Sämtliches Styling | Handgeschriebenes `styles.css` |
 | FontAwesome (4 Pakete) | 5 Icons | Inline-SVG |
-| `@angular/service-worker` (ngsw) | PWA-Caching | Kill-Switch-Worker |
+| `@angular/service-worker` (ngsw) | PWA-Caching | Ersatzlos entfernt |
 
 ## Nicht-Ziele
 
@@ -36,6 +36,7 @@ Bestehende Abhängigkeiten, die entfallen:
   (`<head>`-Boilerplate, Footer) wird bewusst dupliziert; bei elf Dateien ist das
   günstiger als ein Build-Schritt.
 - Kein Offline-Caching mehr.
+- Keine Rückwärtskompatibilität für die `?/pfad`-URL-Form des alten SPA-Hacks.
 
 ## Entscheidungen
 
@@ -45,15 +46,23 @@ Getroffen im Brainstorming, hier zur Nachvollziehbarkeit dokumentiert:
    eingefrorenes Tailwind-Kompilat (verlagert das Build-Problem nur in die Zukunft)
    und das Tailwind Play CDN (~400 KB JS, FOUC, vom Hersteller nicht für Produktion
    empfohlen, und weiterhin ein Framework).
-2. **Service Worker:** Entfernen mit Kill-Switch. Ersatzloses Löschen wurde
-   verworfen, weil Bestandsbesucher sonst dauerhaft die gecachte Angular-App sähen.
+2. **Service Worker:** Ersatzlos entfernen. Ein Kill-Switch-Worker wurde erwogen
+   und verworfen — bei der geringen Besucherzahl lohnt er nicht. Das Löschen ist
+   selbstheilend: Der Browser prüft bei Navigation auf eine neue Version von
+   `ngsw-worker.js`; der 404 führt dazu, dass er die Registrierung selbst abmeldet.
+   Bestandsbesucher sehen dadurch einmalig noch die gecachte alte Seite.
 3. **Repo-Layout:** Website-Dateien direkt im Repo-Root.
 4. **Zusatz-Scope:** Eigene Titel/Meta pro Seite, Sitemap auf saubere URLs,
    Open-Graph-Tags. Alle drei sind additiv und ändern das sichtbare Design nicht.
-5. **404-Verhalten:** Echte, gestaltete 404-Seite statt des heutigen stillen
+5. **`?/pfad`-Altlinks:** Keine Kompatibilitätsschicht. Siehe Abschnitt
+   "Routing und Redirects".
+6. **404-Verhalten:** Echte, gestaltete 404-Seite statt des heutigen stillen
    Redirects auf die Startseite. Begründung: Der stille Redirect erzeugt
-   "Soft 404s", die Suchmaschinen als Fehler werten. Dies ist die einzige bewusste
-   Verhaltensänderung des Umbaus.
+   "Soft 404s", die Suchmaschinen als Fehler werten.
+
+Die Entscheidungen 2, 5 und 6 sind bewusst in Kauf genommene Verhaltensänderungen
+gegenüber heute. Alle drei sind für Besucher entweder unsichtbar oder einmalig.
+Am sichtbaren Design ändert keine von ihnen etwas.
 
 ## Zielstruktur
 
@@ -72,7 +81,6 @@ Getroffen im Brainstorming, hier zur Nachvollziehbarkeit dokumentiert:
 ├── daylight-app/index.html         Redirect auf /daylight/
 ├── 404.html
 ├── styles.css
-├── ngsw-worker.js                  Kill-Switch
 ├── assets/img/                     8 Bilder, Pfade unverändert
 ├── manifest.webmanifest
 ├── robots.txt
@@ -90,53 +98,45 @@ zuverlässig per 301 auf `/imprint/` weiter und liefert dort `index.html`. Das i
 dokumentiertes Verhalten. Die extensionslose Auflösung von `imprint.html` ist ein
 undokumentiertes Extra und wird nicht vorausgesetzt.
 
-## Routing und Redirect-Kompatibilität
+## Routing und Redirects
 
 Der SPA-Hack (`404.html` schreibt Pfade in einen `?/pfad`-Query-String um, den
-`index.html` zurückübersetzt) entfällt. Beide heute erreichbaren URL-Formen müssen
-weiter funktionieren — die `?/pfad`-Form steht in der aktuellen `sitemap.xml` und
-ist damit indexiert.
+`index.html` zurückübersetzt) entfällt ersatzlos. Echte Dateien brauchen kein
+JavaScript-Routing.
 
 | Bestehende URL | Ziel | Mechanismus |
 |---|---|---|
 | `/` | `/` | Datei |
 | `/imprint` | `/imprint/` | GitHub Pages 301 |
-| `/?/imprint` | `/imprint/` | Kompatibilitätsskript in `index.html` |
-| `/?/terms-and-conditions` | `/terms-and-conditions/` | Kompatibilitätsskript |
-| `/?/privacy-policy` | `/privacy-policy/` | Kompatibilitätsskript |
-| `/?/daylight` | `/daylight/` | Kompatibilitätsskript |
-| `/?/laundry` | `/laundry/` | Kompatibilitätsskript |
-| `/?/partywheel` | `/partywheel/` | Kompatibilitätsskript |
-| `/?/cavemap` | `/cavemap/` | Kompatibilitätsskript |
-| `/?/ventify` | `/ventify/` | Kompatibilitätsskript |
+| `/terms-and-conditions` | `/terms-and-conditions/` | GitHub Pages 301 |
+| `/privacy-policy` | `/privacy-policy/` | GitHub Pages 301 |
+| `/daylight` | `/daylight/` | GitHub Pages 301 |
+| `/laundry` | `/laundry/` | GitHub Pages 301 |
+| `/partywheel` | `/partywheel/` | GitHub Pages 301 |
+| `/cavemap` | `/cavemap/` | GitHub Pages 301 |
+| `/ventify` | `/ventify/` | GitHub Pages 301 |
 | `/impress` | `/imprint/` | Redirect-Seite |
 | `/daylight-app` | `/daylight/` | Redirect-Seite |
-| `/?/impress` | `/imprint/` | Kompatibilitätsskript, dann Redirect-Seite |
-| `/?/daylight-app` | `/daylight/` | Kompatibilitätsskript, dann Redirect-Seite |
 | unbekannter Pfad | `404.html` | GitHub Pages |
 
-### Kompatibilitätsskript
+### Bewusst nicht unterstützt: die `?/pfad`-Altform
 
-In `index.html`, vor dem sichtbaren Inhalt. Prüft `location.search` auf das
-Muster `?/…`, dekodiert die `~and~`-Kodierung des alten Hacks und leitet per
-`location.replace()` auf die echte URL um. Es leitet grundsätzlich auf `/<pfad>/`
-um; die Sonderfälle `impress` und `daylight-app` werden nicht gesondert behandelt,
-sondern von den jeweiligen Redirect-Seiten aufgefangen.
-
-Ein unbekannter Pfad wie `?/foo` wird ebenfalls auf `/foo/` umgeleitet und landet
-dort auf der 404-Seite. Das ist gewollt und konsistent mit der 404-Entscheidung.
-
-Das Skript betrifft ausschließlich Altlinks. Alle Seiten funktionieren vollständig
-ohne JavaScript.
+Die alten SPA-Hack-URLs (`https://johannes-bauer.de/?/imprint`) werden **nicht**
+per Skript umgeleitet. Sie liefern künftig die Startseite statt der Zielseite —
+kein Fehler, nur die falsche Seite. Das ist eine bewusste Vereinfachung: Die einzige
+bekannte Quelle dieser URLs ist die aktuelle `sitemap.xml`, die im Zuge dieser
+Migration ohnehin auf saubere URLs umgestellt wird. Die Seite hat wenig Verkehr, der
+Aufwand eines Kompatibilitätsskripts steht in keinem Verhältnis.
 
 ### Redirect-Seiten
 
 `impress/index.html` und `daylight-app/index.html` enthalten je:
 
-- `<meta http-equiv="refresh" content="0; url=/imprint/">` — funktioniert ohne JS
+- `<meta http-equiv="refresh" content="0; url=/imprint/">` — die eigentliche Weiterleitung
 - `<link rel="canonical" href="https://johannes-bauer.de/imprint/">` — für Suchmaschinen
-- `<script>location.replace('/imprint/')</script>` — schnellste Variante
 - Einen sichtbaren Textlink als Fallback
+
+Kein JavaScript. `meta refresh` mit Verzögerung `0` ist praktisch verzögerungsfrei.
 
 ## CSS-Architektur
 
@@ -174,22 +174,17 @@ Markup an passender Stelle gesetzt.
 Die acht Bilder werden unverändert nach `assets/img/` übernommen — gleiche Dateien,
 gleiche Pfade, damit externe Verlinkungen und Hotlinks weiter funktionieren.
 
-## Service-Worker Kill-Switch
+## Service Worker entfernen
 
-`ngsw-worker.js` bleibt als URL bestehen und enthält einen Safety-Worker, der sich
-selbst abmeldet, alle Caches löscht und offene Fenster neu lädt:
+`ngsw-worker.js` wird ersatzlos gelöscht, ebenso `ngsw-config.json` und die
+`ServiceWorkerModule`-Registrierung. Die neuen Seiten registrieren keinen Service
+Worker.
 
-```js
-self.addEventListener('install', () => self.skipWaiting());
-self.addEventListener('activate', (e) => e.waitUntil((async () => {
-  await Promise.all((await caches.keys()).map(k => caches.delete(k)));
-  await self.registration.unregister();
-  (await self.clients.matchAll({type: 'window'})).forEach(c => c.navigate(c.url));
-})()));
-```
-
-Bestandsbesucher holen die Datei beim nächsten Aufruf, der Worker räumt auf, danach
-ist der Übergang vollständig.
+Bestandsbesucher haben den alten Worker noch installiert und bekommen beim nächsten
+Aufruf zunächst die gecachte Angular-Seite. Parallel prüft der Browser die
+Worker-Datei auf Aktualisierungen; der 404 führt dazu, dass er die Registrierung
+entfernt. Ab dem übernächsten Aufruf sehen sie die neue Seite. Ein aktives
+Aufräumen ist bei dieser Besucherzahl nicht nötig.
 
 `manifest.webmanifest` bleibt inhaltlich erhalten — die Seite bleibt installierbar,
 nur ohne Offline-Cache. Eine Anpassung ist nötig: `scope` und `start_url` stehen
@@ -197,7 +192,12 @@ heute auf `"./"` (relativ). Da es künftig echte Unterseiten gibt, würde eine
 Installation von `/imprint/` aus dort auch starten. Beide Werte werden deshalb auf
 `"/"` gesetzt. Das Manifest wird von allen Seiten verlinkt.
 
-Die neuen Seiten registrieren **keinen** Service Worker.
+## Kein JavaScript
+
+Als Folge der beiden Vereinfachungen enthält die fertige Seite keinerlei
+JavaScript: kein Routing, kein Kompatibilitätsskript, kein Service Worker, keine
+Redirect-Skripte. Alle elf HTML-Dateien sind reines Markup plus ein Stylesheet.
+Das ist ein prüfbares Abnahmekriterium — siehe Verifikation.
 
 ## Metadaten und SEO
 
@@ -272,11 +272,11 @@ rekonstruierbar.
 Zusätzlich zu prüfen:
 
 - Nach dem Deploy wird jede Seiten-URL in beiden Formen einzeln aufgerufen: ohne
-  Slash (`/imprint`), mit Slash (`/imprint/`) und als Altlink (`/?/imprint`) — für
-  alle acht Unterseiten. Dazu die beiden Redirect-Seiten in beiden Formen und ein
-  frei erfundener Pfad für die 404-Seite.
-- Alle Seiten funktionieren mit deaktiviertem JavaScript.
-- Der Kill-Switch wird lokal gegen einen zuvor registrierten Service Worker getestet.
+  Slash (`/imprint`) und mit Slash (`/imprint/`) — für alle acht Unterseiten. Dazu
+  die beiden Redirect-Seiten und ein frei erfundener Pfad für die 404-Seite.
+- Alle Seiten werden mit deaktiviertem JavaScript geprüft und müssen unverändert
+  aussehen und funktionieren.
+- `grep -rn "<script" .` über die fertige Seite liefert keine Treffer.
 
 ## Zu löschen
 
@@ -298,7 +298,7 @@ und der Satz "Build with Angular" stimmen nach der Migration nicht mehr.
 | Risiko | Gegenmaßnahme |
 |---|---|
 | Visuelle Abweichung durch handgeschriebenes CSS | Screenshot-Vergleich vor/nach, siehe Verifikation |
-| Bestandsbesucher hängen im alten Service-Worker-Cache | Kill-Switch unter derselben URL |
-| Indexierte `?/pfad`-URLs brechen | Kompatibilitätsskript in `index.html` |
+| Bestandsbesucher sehen einmalig die gecachte alte Seite | Bewusst akzeptiert; der 404 auf `ngsw-worker.js` lässt den Browser die Registrierung selbst entfernen |
+| Indexierte `?/pfad`-URLs zeigen die Startseite | Bewusst akzeptiert; `sitemap.xml` wird auf saubere URLs umgestellt, die Quelle entfällt damit |
 | Repo-Historie öffentlich unter `/.git/` | `rm -rf .git` im Workflow vor dem Upload |
 | FontAwesome-Pfaddaten nach dem Löschen nicht mehr verfügbar | Icons vor dem Löschen extrahieren |
