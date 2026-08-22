@@ -13,8 +13,7 @@ entspricht dem von GitHub Pages.
 
 ## Aufbau
 
-Jede Seite ist eine eigene `index.html` in einem Verzeichnis, das dem URL-Pfad
-entspricht. `styles.css` im Root ist das einzige Stylesheet.
+Unterseiten liegen je als `index.html` in einem Verzeichnis, das dem URL-Pfad entspricht (`imprint/index.html` für `/imprint/`). Die Startseite ist `index.html` im Root. `404.html` liegt im Root — GitHub Pages liefert sie für unbekannte Pfade. `styles.css` ist das einzige Stylesheet.
 
 ## Prüfen
 
