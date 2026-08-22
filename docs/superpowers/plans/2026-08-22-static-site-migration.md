@@ -502,12 +502,17 @@ wird geschätzt.
   - `.spacer` — `flex-grow: 1`
   - `.avatar` — Portraitkreis mit Hover-Zoom
   - `.social-links` — Zeile mit `gap`
-  - `.social-link` — Basisstil der vier Icon-Links, plus Modifier
+  - `.social-link` — Basisstil der vier Icon-Links; setzt `font-size` aus `text-4xl`,
+    die das enthaltene `.icon` erbt. Plus Modifier
     `.social-link--linkedin`, `--xing`, `--github`, `--mail`
   - `.footer-links` — Footerzeile
   - `.app-link` — App-Store-Titelzeile (blau, Icon plus Überschrift)
   - `.app-link--centered` — zusätzlich horizontal zentriert (Daylight, Partywheel)
-  - `.icon` — Größe der Inline-SVGs im Fluss der Schriftgröße
+  - `.icon` — **größenneutral**: `width:1em; height:1em`, `display:inline-block`,
+    `vertical-align:-0.125em`. Setzt selbst **keine** `font-size`. Die Größe kommt
+    vom Elternelement — `.social-link` (Homepage, `text-4xl`) bzw. `.app-link`
+    (App-Seiten, `text-3xl` / ab 640px `text-5xl`). So verhält sich das Inline-SVG
+    wie das bisherige FontAwesome-Icon, das ebenfalls über `font-size` skaliert wurde.
   - `.screenshots` — horizontale Screenshot-Reihe (Daylight, Partywheel)
   - `.screenshots__img` — responsive Bildbreiten 150/250/300px
   - `.screenshots__img--bordered` — zusätzlich 2px Rahmen (Partywheel)
@@ -889,7 +894,7 @@ Screenshots, Beschreibung, App-Datenschutz.
 | `flex flex-col bg-white p-3 shadow-md lg:rounded-lg lg:m-5 max-w-(--breakpoint-2xl)` | `card card--lg card--2xl` |
 | `text-blue-500 hover:text-blue-700 drop-shadow-xs hover:drop-shadow-md flex flex-row gap-4 justify-center` | `app-link app-link--centered` |
 | `text-blue-500 … flex flex-row gap-4` (Laundry, ohne `justify-center`) | `app-link` |
-| `sm:text-5xl text-3xl` (auf `fa-icon` und `h1`) | `icon` bzw. keine Klasse — Größe regelt `.app-link h1` |
+| `sm:text-5xl text-3xl` (auf `fa-icon` und `h1`) | SVG bekommt `icon`, `h1` bekommt keine Klasse — die Größe setzt `.app-link` als Container, beide erben sie |
 | `flex flex-row flex-nowrap gap-1 justify-start md:justify-center mt-4 overflow-auto` | `screenshots` |
 | `max-w-[150px] md:max-w-[250px] lg:max-w-[300px] w-full` | `screenshots__img` |
 | dieselbe plus `border-2` (Partywheel) | `screenshots__img screenshots__img--bordered` |
@@ -1512,7 +1517,8 @@ Alle 86 im Original verwendeten Tailwind-Klassen und ihr Ziel. Die Spalte
 |---|---|---|
 | `.app-link` | `text-blue-500 hover:text-blue-700 drop-shadow-xs hover:drop-shadow-md flex flex-row gap-4` | `--color-blue-500`, `--color-blue-700`, `.gap-4`, `.flex-row` |
 | `.app-link--centered` | `justify-center` | `.justify-center` |
-| `.app-link h1`, `.icon` | `sm:text-5xl text-3xl` | `.text-3xl`, `@media (min-width:40rem)` auf `.text-5xl` |
+| `.app-link` (Container) | `sm:text-5xl text-3xl` — setzt `font-size`, Icon und `h1` erben sie | `.text-3xl`, `@media (min-width:40rem)` auf `.text-5xl` |
+| `.icon` | groessenneutral: `width:1em; height:1em` plus `display:inline-block` und `vertical-align:-0.125em` | keine — folgt der `font-size` des Elternelements |
 | `.screenshots` | `flex flex-row flex-nowrap gap-1 justify-start md:justify-center mt-4 overflow-auto` | `.flex-nowrap`, `.gap-1`, `.justify-start`, `.mt-4`, `.overflow-auto`, `@media (min-width:48rem)` |
 | `.screenshots__img` | `max-w-[150px] md:max-w-[250px] lg:max-w-[300px] w-full` | Literalwerte 150px / 250px / 300px |
 | `.screenshots__img--bordered` | `border-2` | `.border-2` |
