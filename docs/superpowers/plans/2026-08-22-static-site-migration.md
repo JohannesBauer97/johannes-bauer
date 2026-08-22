@@ -132,7 +132,7 @@ mkdir -p tools && cp src/johannes-bauer/dist/johannes-bauer/browser/*.css tools/
 ```bash
 missing=0
 for c in 'bg-gray-50' 'drop-shadow-xs' 'shadow-md' 'rounded-lg' 'text-blue-600' \
-         'h-72' 'select-none' 'list-decimal' 'object-cover' 'basis-1/2'; do
+         'h-72' 'select-none' 'list-decimal' 'object-cover' 'basis-1'; do
   grep -qF -- "$c" tools/tailwind-reference.css || { echo "FEHLT: $c"; missing=1; }
 done
 [ "$missing" = 0 ] && echo "OK: Referenz vollstaendig"
@@ -140,6 +140,10 @@ done
 
 Erwartet: `OK: Referenz vollstaendig`. Bei Fehlern war der Build unvollständig —
 Schritt 2 wiederholen.
+
+Hinweis: Tailwind maskiert `:` und `/` in Selektoren (`.lg\:basis-1\/2`,
+`.hover\:scale-105`). Greps auf Klassennamen mit diesen Zeichen müssen die
+Maskierung berücksichtigen oder auf einen Teilstring ohne sie ausweichen.
 
 - [ ] **Schritt 5: FontAwesome-Icons extrahieren**
 
