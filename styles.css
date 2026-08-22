@@ -225,10 +225,19 @@ h3 { font-size: var(--text-lg);  line-height: var(--text-lg--line-height); }
   }
 }
 /* Groessenneutral: die Groesse kommt ueber font-size vom Elternelement,
-   genau wie beim frueheren FontAwesome-SVG. */
+   .icon setzt selbst keine font-size. Die Deklarationen sind .svg-inline--fa
+   aus @fortawesome/fontawesome-svg-core 7.3.1 (styles.css Zeile 41-48), das
+   angular-fontawesome zur Laufzeit in den <head> injizierte:
+     box-sizing:content-box; display:var(--fa-display,inline-block);
+     height:1em; overflow:visible; vertical-align:-.125em;
+     width:var(--fa-width,1.25em)
+   --fa-width wurde nirgends gesetzt, die Breite war also feste 1.25em —
+   nicht das viewBox-Seitenverhaeltnis. Siehe Fix-Report zu Task 4. */
 .icon {
-  width: 1em; height: 1em;
-  display: inline-block; vertical-align: -0.125em;
+  box-sizing: content-box;
+  width: 1.25em; height: 1em;
+  display: inline-block; overflow: visible;
+  vertical-align: -0.125em;
 }
 /* flex flex-row flex-nowrap gap-1 justify-start mt-4 overflow-auto */
 .screenshots {
@@ -270,6 +279,11 @@ h3 { font-size: var(--text-lg);  line-height: var(--text-lg--line-height); }
 .app-page p { margin-top: var(--sp-2); }                      /* mt-2 */
 .app-page p:first-child { margin-top: var(--sp-4); }          /* mt-4 */
 .app-page h1 + p, .app-page h2 + p { margin-top: 0; }         /* ohne mt-* */
+/* Absaetze, die im Original kein mt-* trugen, aber weder auf h1/h2 noch am
+   Anfang eines Abschnitts stehen (zwei Faelle in der Partywheel-
+   Datenschutzerklaerung, jeweils direkt nach einer <ul>). Zwei Klassen im
+   Selektor, damit die Regel .app-page p sicher geschlagen wird. */
+.app-page p.p--flush { margin-top: 0; }
 .app-page .split__half > p { text-align: justify; }           /* text-justify */
 /* Die einleitenden Fettzeilen ("Wichtigste Features:", "Funktionen",
    "Spielanleitung") trugen font-semibold und werden im Markup als
