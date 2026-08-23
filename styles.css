@@ -302,6 +302,11 @@ h3 { font-size: var(--text-lg);  line-height: var(--text-lg--line-height); }
 }
 .app-page ul { list-style-type: disc; list-style-position: inside; }
 .app-page ol { list-style-type: decimal; list-style-position: inside; }
+/* Wortwoertlich aus daylight.component.css und
+   wheel-of-drinking.component.css — beide enthalten dieselbe Regel
+   li { padding: 3px 0 3px 0; }. Laundry Symbols traegt zwar ebenfalls
+   .app-page, hat aber kein <li>; die Regel ist dort wirkungslos. */
+.app-page li { padding: 3px 0; }
 /* Zwei Listen der Partywheel-Datenschutzerklaerung tragen im Original keine
    Listenklassen und erscheinen deshalb ohne Aufzaehlungszeichen. */
 .app-page .list-plain { list-style-type: none; }
