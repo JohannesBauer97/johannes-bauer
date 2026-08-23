@@ -47,10 +47,19 @@ Getroffen im Brainstorming, hier zur Nachvollziehbarkeit dokumentiert:
    und das Tailwind Play CDN (~400 KB JS, FOUC, vom Hersteller nicht für Produktion
    empfohlen, und weiterhin ein Framework).
 2. **Service Worker:** Ersatzlos entfernen. Ein Kill-Switch-Worker wurde erwogen
-   und verworfen — bei der geringen Besucherzahl lohnt er nicht. Das Löschen ist
-   selbstheilend: Der Browser prüft bei Navigation auf eine neue Version von
-   `ngsw-worker.js`; der 404 führt dazu, dass er die Registrierung selbst abmeldet.
-   Bestandsbesucher sehen dadurch einmalig noch die gecachte alte Seite.
+   und verworfen — bei der geringen Besucherzahl lohnt er sich nicht, und ein
+   eigener Worker widerspräche ohnehin der „kein JavaScript"-Vorgabe dieses
+   Projekts. Das Löschen heilt sich in der Praxis selbst, aber über zwei
+   getrennte Mechanismen: Angulars `ngsw-worker.js` schaltet selbst in einen
+   Pass-Through-Safe-Mode, sobald sein periodischer Check von `/ngsw.json`
+   404 liefert, und fängt danach keine Requests mehr ab — das ist der
+   Mechanismus, der in den meisten Browsern greift. Zusätzlich melden manche
+   Browser (u. a. Chromium) eine Registrierung automatisch ab, wenn die
+   Worker-Datei selbst bei der Update-Prüfung 404 liefert; das ist
+   Browserverhalten und keine Garantie der Service-Worker-Spezifikation, die
+   für eine nicht-OK-Antwort lediglich vorsieht, den Update-Job zu verwerfen
+   und die bestehende Registrierung unangetastet zu lassen. Bestandsbesucher
+   sehen dadurch einmalig noch die gecachte alte Seite.
 3. **Repo-Layout:** Website-Dateien direkt im Repo-Root.
 4. **Zusatz-Scope:** Eigene Titel/Meta pro Seite, Sitemap auf saubere URLs,
    Open-Graph-Tags. Alle drei sind additiv und ändern das sichtbare Design nicht.
@@ -144,8 +153,12 @@ Ein einziges `styles.css` im Root, in vier Blöcken:
 
 1. **Base** — `box-sizing: border-box`, `margin: 0`, Hintergrund `rgb(249, 250, 251)`,
    Tailwinds Default-Font-Stack wörtlich übernommen
-   (`ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", …`), damit die
-   Schriftdarstellung identisch bleibt.
+   (`-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+   "Noto Sans", Arial, sans-serif, "Apple Color Emoji", …`), damit die
+   Schriftdarstellung identisch bleibt. Der Wert stammt aus dem kompilierten
+   Referenz-CSS des heutigen Angular-Builds, nicht aus Tailwinds
+   dokumentiertem Default (`ui-sans-serif, system-ui, …`) — `styles.css`
+   folgt korrekt der Referenz.
 2. **Typografie** — die `h1`/`h2`/`h3`-Größen aus dem heutigen `@layer base`-Block
    (`text-2xl`, `text-xl`, `text-lg`) plus die Abstände aus den Komponenten-CSS-Dateien.
 3. **Komponenten** — semantische Klassen für die wiederkehrenden Muster:
@@ -181,10 +194,15 @@ gleiche Pfade, damit externe Verlinkungen und Hotlinks weiter funktionieren.
 Worker.
 
 Bestandsbesucher haben den alten Worker noch installiert und bekommen beim nächsten
-Aufruf zunächst die gecachte Angular-Seite. Parallel prüft der Browser die
-Worker-Datei auf Aktualisierungen; der 404 führt dazu, dass er die Registrierung
-entfernt. Ab dem übernächsten Aufruf sehen sie die neue Seite. Ein aktives
-Aufräumen ist bei dieser Besucherzahl nicht nötig.
+Aufruf zunächst die gecachte Angular-Seite. Der Worker selbst lädt bei jeder
+Navigation `/ngsw.json` nach; sobald das 404 liefert, schaltet `ngsw-worker.js`
+in einen Pass-Through-Safe-Mode und fängt keine Requests mehr ab — die Seite lädt
+dann wieder normal vom Netz. Das ist der Mechanismus, auf den sich verlassen
+werden kann. Zusätzlich melden manche Browser (u. a. Chromium) die Registrierung
+automatisch ab, wenn die Worker-Datei bei der periodischen Update-Prüfung 404
+liefert; das ist Browserverhalten, keine Vorgabe der Service-Worker-Spezifikation.
+Ab dem übernächsten Aufruf sehen Bestandsbesucher in jedem Fall die neue Seite.
+Ein aktives Aufräumen ist bei dieser Besucherzahl nicht nötig.
 
 `manifest.webmanifest` bleibt inhaltlich erhalten — die Seite bleibt installierbar,
 nur ohne Offline-Cache. Eine Anpassung ist nötig: `scope` und `start_url` stehen
@@ -196,7 +214,8 @@ Installation von `/imprint/` aus dort auch starten. Beide Werte werden deshalb a
 
 Als Folge der beiden Vereinfachungen enthält die fertige Seite keinerlei
 JavaScript: kein Routing, kein Kompatibilitätsskript, kein Service Worker, keine
-Redirect-Skripte. Alle elf HTML-Dateien sind reines Markup plus ein Stylesheet.
+Redirect-Skripte. Alle zwölf HTML-Dateien (neun Inhaltsseiten, zwei
+Weiterleitungen, `404.html`) sind reines Markup plus ein Stylesheet.
 Das ist ein prüfbares Abnahmekriterium — siehe Verifikation.
 
 ## Metadaten und SEO
@@ -225,7 +244,7 @@ aktualisiert. `robots.txt` und `app-ads.txt` bleiben inhaltlich unverändert.
 steps:
   - uses: actions/checkout@v4
   - name: Nicht-Website-Dateien entfernen
-    run: rm -rf .git .github docs
+    run: rm -rf .git .github docs tools .superpowers
   - uses: actions/configure-pages@v5
   - uses: actions/upload-pages-artifact@v3
     with:
@@ -298,7 +317,7 @@ und der Satz "Build with Angular" stimmen nach der Migration nicht mehr.
 | Risiko | Gegenmaßnahme |
 |---|---|
 | Visuelle Abweichung durch handgeschriebenes CSS | Screenshot-Vergleich vor/nach, siehe Verifikation |
-| Bestandsbesucher sehen einmalig die gecachte alte Seite | Bewusst akzeptiert; der 404 auf `ngsw-worker.js` lässt den Browser die Registrierung selbst entfernen |
+| Bestandsbesucher sehen einmalig die gecachte alte Seite | Bewusst akzeptiert; Angulars `ngsw-worker.js` schaltet beim 404 auf `/ngsw.json` selbst in Pass-Through-Safe-Mode, zusätzlich melden manche Browser die Registrierung bei 404 auf die Worker-Datei selbst ab |
 | Indexierte `?/pfad`-URLs zeigen die Startseite | Bewusst akzeptiert; `sitemap.xml` wird auf saubere URLs umgestellt, die Quelle entfällt damit |
 | Repo-Historie öffentlich unter `/.git/` | `rm -rf .git` im Workflow vor dem Upload |
 | FontAwesome-Pfaddaten nach dem Löschen nicht mehr verfügbar | Icons vor dem Löschen extrahieren |
