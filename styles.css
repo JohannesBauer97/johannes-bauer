@@ -1,0 +1,352 @@
+/* styles.css — johannes-bauer.de
+   Alle Werte stammen aus tools/tailwind-reference.css (Tailwind v4 Build).
+   Icons: Font Awesome Free, CC BY 4.0, https://fontawesome.com/license/free
+   Die Kommentare nennen jeweils die Tailwind-Klasse, die ersetzt wird. */
+
+/* == 1. Variablen (einzige Literale der Datei) ============================
+   Quelle: :root/:host in @layer theme der Referenz sowie die dort
+   aufgeloesten Utility-Werte (.shadow-md, .rounded-lg, .rounded-full). */
+:root {
+  /* --default-font-family: var(--font-sans) */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  --color-white: #fff;
+  --color-gray-50: oklch(98.5% .002 247.839);
+  --color-gray-200: oklch(92.8% .006 264.531);
+  --color-gray-600: oklch(44.6% .03 256.802);
+  --color-gray-800: oklch(27.8% .033 256.848);
+  --color-gray-900: oklch(21% .034 264.665);
+  --color-blue-500: oklch(62.3% .214 259.815);
+  --color-blue-600: oklch(54.6% .245 262.881);
+  --color-blue-700: oklch(48.8% .243 264.376);
+  --color-blue-800: oklch(42.4% .199 265.638);
+  --color-green-600: oklch(62.7% .194 149.214);
+  --color-green-800: oklch(44.8% .119 151.328);
+  --color-red-600: oklch(57.7% .245 27.325);
+  --color-red-800: oklch(44.4% .177 26.899);
+
+  /* Basiseinheit aller m-/p-/gap-/w-/h-Utilities */
+  --spacing: .25rem;
+  --sp-2: calc(var(--spacing) * 2);  /* .5rem  */
+  --sp-3: calc(var(--spacing) * 3);  /* .75rem */
+  --sp-4: calc(var(--spacing) * 4);  /* 1rem   */
+  --sp-5: calc(var(--spacing) * 5);  /* 1.25rem */
+  --sp-6: calc(var(--spacing) * 6);  /* 1.5rem */
+  --sp-8: calc(var(--spacing) * 8);  /* 2rem   */
+  --sp-72: calc(var(--spacing) * 72);/* 18rem  */
+
+  --text-sm: .875rem;   --text-sm--line-height: calc(1.25 / .875);
+  --text-lg: 1.125rem;  --text-lg--line-height: calc(1.75 / 1.125);
+  --text-xl: 1.25rem;   --text-xl--line-height: calc(1.75 / 1.25);
+  --text-2xl: 1.5rem;   --text-2xl--line-height: calc(2 / 1.5);
+  --text-3xl: 1.875rem; --text-3xl--line-height: 1.2;
+  --text-4xl: 2.25rem;  --text-4xl--line-height: calc(2.5 / 2.25);
+  --text-5xl: 3rem;     --text-5xl--line-height: 1;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* --tw-shadow aus .shadow-md; drop-shadows aus dem :root der Referenz */
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / .1), 0 2px 4px -2px rgb(0 0 0 / .1);
+  --drop-shadow-xs: 0 1px 1px rgb(0 0 0 / .05);
+  --drop-shadow-md: 0 3px 3px rgb(0 0 0 / .12);
+
+  --radius-lg: .5rem;                  /* .rounded-lg   */
+  --radius-full: calc(infinity * 1px); /* .rounded-full */
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 96rem;
+
+  --ease-in-out: cubic-bezier(.4, 0, .2, 1);
+  /* Eigenschaftsliste von .transition */
+  --transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events;
+}
+/* Breakpoints sm 40rem / md 48rem / lg 64rem stehen in den @media-Regeln als
+   Literale — var() ist in Media-Query-Bedingungen nicht erlaubt. Belegt durch
+   @media(width>=40rem), (width>=48rem), (width>=64rem) in der Referenz. */
+
+/* == 2. Base / Reset ======================================================
+   Auszug aus @layer base der Referenz (Tailwind Preflight), beschraenkt auf
+   die tatsaechlich vorkommenden Elemente. */
+*, *::before, *::after, ::backdrop {
+  box-sizing: border-box; margin: 0; padding: 0;
+  border: 0 solid; border-color: var(--color-gray-200);
+}
+html {
+  line-height: 1.5; -webkit-text-size-adjust: 100%;
+  tab-size: 4; -webkit-tap-highlight-color: transparent;
+}
+h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; }
+a { color: inherit; text-decoration: inherit; }
+b, strong { font-weight: bolder; }
+ol, ul { list-style: none; }
+img, svg { display: block; vertical-align: middle; }
+img { max-width: 100%; height: auto; }
+
+/* wortwoertlich aus dem alten Angular-Stylesheet, siehe
+   git show d015816:src/johannes-bauer/src/styles.css */
+html, body {
+  margin: 0; padding: 0; width: 100%; height: 100%;
+  background-color: rgb(249, 250, 251);
+  font-family: var(--font-sans);
+}
+
+/* == 3. Typografie (@layer base des heutigen Stylesheets) ================= */
+h1 { font-size: var(--text-2xl); line-height: var(--text-2xl--line-height); }
+h2 { font-size: var(--text-xl);  line-height: var(--text-xl--line-height); }
+h3 { font-size: var(--text-lg);  line-height: var(--text-lg--line-height); }
+
+/* == 4. Layout ============================================================ */
+/* flex flex-col h-full w-full bg-gray-50 select-none */
+.page {
+  display: flex; flex-direction: column; height: 100%; width: 100%;
+  background-color: var(--color-gray-50);
+  -webkit-user-select: none; user-select: none;
+}
+/* flex flex-col items-center justify-center w-full */
+.page-centered {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; width: 100%;
+}
+/* flex items-start justify-center w-full */
+.page-top {
+  display: flex; align-items: flex-start;
+  justify-content: center; width: 100%;
+}
+.spacer { flex-grow: 1; }                                        /* grow */
+
+/* container mx-auto p-6 */
+.prose { width: 100%; margin-inline: auto; padding: var(--sp-6); }
+@media (min-width: 40rem) { .prose { max-width: 40rem; } }
+@media (min-width: 48rem) { .prose { max-width: 48rem; } }
+@media (min-width: 64rem) { .prose { max-width: 64rem; } }
+@media (min-width: 80rem) { .prose { max-width: 80rem; } }
+@media (min-width: 96rem) { .prose { max-width: 96rem; } }
+
+/* == 5. Karte ============================================================= */
+/* bg-white p-3 shadow-md */
+.card {
+  background-color: var(--color-white);
+  padding: var(--sp-3);
+  box-shadow: var(--shadow-md);
+}
+.card--always { border-radius: var(--radius-lg); }   /* rounded-lg + sm:m-5 */
+.card--xl  { max-width: var(--breakpoint-xl); }      /* max-w-(--breakpoint-xl) */
+.card--2xl { max-width: var(--breakpoint-2xl); }     /* max-w-(--breakpoint-2xl) */
+@media (min-width: 40rem) {                          /* sm:rounded-lg sm:m-5 */
+  .card--sm { border-radius: var(--radius-lg); }
+  .card--sm, .card--always { margin: var(--sp-5); }
+}
+@media (min-width: 64rem) {                          /* lg:rounded-lg lg:m-5 */
+  .card--lg { border-radius: var(--radius-lg); margin: var(--sp-5); }
+}
+
+/* == 6. Homepage ========================================================== */
+/* flex flex-col items-center justify-center */
+.home__body {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+/* w-72 h-72 mb-8 rounded-full overflow-hidden drop-shadow-md
+   transition ease-in-out duration-500 */
+.avatar {
+  width: var(--sp-72); height: var(--sp-72); margin-bottom: var(--sp-8);
+  border-radius: var(--radius-full); overflow: hidden;
+  filter: drop-shadow(var(--drop-shadow-md));
+  transition-property: var(--transition-property);
+  transition-timing-function: var(--ease-in-out);
+  transition-duration: .5s;
+}
+/* w-full h-full object-cover */
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+/* text-4xl font-bold mb-2 text-center drop-shadow-xs */
+.home__name {
+  font-size: var(--text-4xl); line-height: var(--text-4xl--line-height);
+  font-weight: var(--font-weight-bold); margin-bottom: var(--sp-2);
+  text-align: center; filter: drop-shadow(var(--drop-shadow-xs));
+}
+/* text-xl mb-6 text-center drop-shadow-xs */
+.home__role {
+  font-size: var(--text-xl); line-height: var(--text-xl--line-height);
+  margin-bottom: var(--sp-6);
+  text-align: center; filter: drop-shadow(var(--drop-shadow-xs));
+}
+.social-links { display: flex; column-gap: var(--sp-4); }   /* flex gap-x-4 */
+/* text-4xl drop-shadow-xs */
+.social-link {
+  font-size: var(--text-4xl); line-height: var(--text-4xl--line-height);
+  filter: drop-shadow(var(--drop-shadow-xs));
+}
+.social-link--linkedin { color: var(--color-blue-600); }
+.social-link--xing     { color: var(--color-green-600); }
+.social-link--github   { color: var(--color-gray-800); }
+.social-link--mail     { color: var(--color-red-600); }
+/* text-gray-600 text-sm mb-2 text-center */
+.footer-links {
+  color: var(--color-gray-600);
+  font-size: var(--text-sm); line-height: var(--text-sm--line-height);
+  margin-bottom: var(--sp-2); text-align: center;
+}
+/* Hover-Varianten stehen in der Referenz unter @media(hover:hover) */
+@media (hover: hover) {
+  .avatar:hover { scale: 105% 105%; }                    /* hover:scale-105 */
+  .social-link:hover { filter: drop-shadow(var(--drop-shadow-md)); }
+  .social-link--linkedin:hover { color: var(--color-blue-800); }
+  .social-link--xing:hover     { color: var(--color-green-800); }
+  .social-link--github:hover   { color: var(--color-gray-900); }
+  .social-link--mail:hover     { color: var(--color-red-800); }
+  .footer-links a:hover { text-decoration-line: underline; }
+}
+
+/* == 7. App-Seiten-Komponenten ============================================ */
+/* text-blue-500 drop-shadow-xs flex flex-row gap-4 + text-3xl/sm:text-5xl */
+.app-link {
+  color: var(--color-blue-500);
+  filter: drop-shadow(var(--drop-shadow-xs));
+  display: flex; flex-direction: row; gap: var(--sp-4);
+  font-size: var(--text-3xl); line-height: var(--text-3xl--line-height);
+}
+.app-link--centered { justify-content: center; }           /* justify-center */
+/* Titel erbt Groesse und Gewicht vom .app-link — im Original trug das h1
+   selbst sm:text-5xl text-3xl und erbte font-weight aus dem Preflight.
+   Zwei Klassen im Selektor, damit die Regel .app-page h1 (Abschnitt 9)
+   nicht gewinnt. */
+.app-page .app-link h1 {
+  font-size: inherit; line-height: inherit;
+  font-weight: inherit; margin: 0;
+}
+@media (min-width: 40rem) {                                   /* sm:text-5xl */
+  .app-link {
+    font-size: var(--text-5xl); line-height: var(--text-5xl--line-height);
+  }
+}
+@media (hover: hover) {
+  .app-link:hover {
+    color: var(--color-blue-700);
+    filter: drop-shadow(var(--drop-shadow-md));
+  }
+}
+/* Groessenneutral: die Groesse kommt ueber font-size vom Elternelement,
+   .icon setzt selbst keine font-size. Die Deklarationen sind .svg-inline--fa
+   aus @fortawesome/fontawesome-svg-core 7.3.1 (styles.css Zeile 41-48), das
+   angular-fontawesome zur Laufzeit in den <head> injizierte:
+     box-sizing:content-box; display:var(--fa-display,inline-block);
+     height:1em; overflow:visible; vertical-align:-.125em;
+     width:var(--fa-width,1.25em)
+   --fa-width wurde nirgends gesetzt, die Breite war also feste 1.25em —
+   nicht das viewBox-Seitenverhaeltnis. Siehe Fix-Report zu Task 4. */
+.icon {
+  box-sizing: content-box;
+  width: 1.25em; height: 1em;
+  display: inline-block; overflow: visible;
+  vertical-align: -0.125em;
+}
+/* flex flex-row flex-nowrap gap-1 justify-start mt-4 overflow-auto */
+.screenshots {
+  display: flex; flex-direction: row; flex-wrap: nowrap;
+  gap: var(--spacing); justify-content: flex-start;
+  margin-top: var(--sp-4); overflow: auto;
+}
+.screenshots__img { max-width: 150px; width: 100%; }  /* max-w-[150px] w-full */
+/* border-2 — die Farbe liefert der *-Reset (--color-gray-200) */
+.screenshots__img--bordered { border-style: solid; border-width: 2px; }
+@media (min-width: 48rem) {              /* md:justify-center md:max-w-[250px] */
+  .screenshots { justify-content: center; }
+  .screenshots__img { max-width: 250px; }
+}
+@media (min-width: 64rem) {                             /* lg:max-w-[300px] */
+  .screenshots__img { max-width: 300px; }
+}
+/* flex flex-row flex-wrap */
+.split { display: flex; flex-direction: row; flex-wrap: wrap; }
+/* flex flex-row flex-wrap gap-5 justify-center */
+.laundry-shots {
+  display: flex; flex-direction: row; flex-wrap: wrap;
+  gap: var(--sp-5); justify-content: center;
+}
+.laundry-shots__img { height: fit-content; max-width: 250px; } /* h-fit max-w-[250px] */
+@media (min-width: 64rem) { .split__half { flex-basis: 50%; } } /* lg:basis-1/2 */
+
+/* == 8. Inline-Textlink =================================================== */
+.link { color: var(--color-blue-600); }        /* text-blue-600 hover:underline */
+.link--plain { color: inherit; }               /* nur hover:underline */
+@media (hover: hover) { .link:hover { text-decoration-line: underline; } }
+
+/* == 9. Seiten-Scopes ===================================================== */
+/* body.home braucht keine eigenen Deklarationen: Hintergrund, Hoehe und
+   select-none traegt .page, die Typografie .home__name / .home__role.
+   Die Klasse bleibt als Markup-Hook bestehen. */
+
+/* -- App-Seiten: Daylight, Laundry Symbols, Partywheel ------------------- */
+.app-page .card { display: flex; flex-direction: column; }    /* flex flex-col */
+.app-page p { margin-top: var(--sp-2); }                      /* mt-2 */
+.app-page p:first-child { margin-top: var(--sp-4); }          /* mt-4 */
+.app-page h1 + p, .app-page h2 + p { margin-top: 0; }         /* ohne mt-* */
+/* Absaetze, die im Original kein mt-* trugen, aber weder auf h1/h2 noch am
+   Anfang eines Abschnitts stehen (zwei Faelle in der Partywheel-
+   Datenschutzerklaerung, jeweils direkt nach einer <ul>). Zwei Klassen im
+   Selektor, damit die Regel .app-page p sicher geschlagen wird. */
+.app-page p.p--flush { margin-top: 0; }
+.app-page .split__half > p { text-align: justify; }           /* text-justify */
+/* Die einleitenden Abschnittszeilen ("Wichtigste Features:", "Funktionen",
+   "Spielanleitung") trugen mt-2 font-semibold. Das mt-2 deckt bereits
+   .app-page p ab, das font-semibold traegt diese Klasse. Die DOM-Struktur
+   bleibt unveraendert, es kommt kein <strong> hinzu. Die drei <b> der
+   Partywheel-Anschrift bleiben ueber den Base-Reset b,strong{bolder}
+   bei 700 — genau wie im Original. */
+.app-page p.section-label { font-weight: var(--font-weight-semibold); }
+.app-page h1 {                                    /* mb-2 mt-5 font-bold */
+  margin-top: var(--sp-5); margin-bottom: var(--sp-2);
+  font-weight: var(--font-weight-bold);
+}
+.app-page h2 {                                    /* mb-2 mt-4 font-semibold */
+  margin-top: var(--sp-4); margin-bottom: var(--sp-2);
+  font-weight: var(--font-weight-semibold);
+}
+.app-page ul { list-style-type: disc; list-style-position: inside; }
+.app-page ol { list-style-type: decimal; list-style-position: inside; }
+/* Wortwoertlich aus daylight.component.css und
+   wheel-of-drinking.component.css — beide enthalten dieselbe Regel
+   li { padding: 3px 0 3px 0; }. Laundry Symbols traegt zwar ebenfalls
+   .app-page, hat aber kein <li>; die Regel ist dort wirkungslos. */
+.app-page li { padding: 3px 0; }
+/* Zwei Listen der Partywheel-Datenschutzerklaerung tragen im Original keine
+   Listenklassen und erscheinen deshalb ohne Aufzaehlungszeichen. */
+.app-page .list-plain { list-style-type: none; }
+
+/* -- Ventify ------------------------------------------------------------- */
+.ventify h1 {                                     /* text-3xl font-bold mb-4 */
+  font-size: var(--text-3xl); line-height: var(--text-3xl--line-height);
+  font-weight: var(--font-weight-bold); margin-bottom: var(--sp-4);
+}
+.ventify h2 {                                  /* text-2xl font-semibold mb-2 */
+  font-size: var(--text-2xl); line-height: var(--text-2xl--line-height);
+  font-weight: var(--font-weight-semibold); margin-bottom: var(--sp-2);
+}
+.ventify .prose > p       { margin-bottom: var(--sp-4); }   /* mb-4 */
+.ventify .prose > div     { margin-bottom: var(--sp-6); }   /* mb-6 */
+.ventify .prose > div > p { margin-bottom: var(--sp-2); }   /* mb-2 */
+.ventify ul { list-style-type: disc; margin-left: var(--sp-6); } /* list-disc ml-6 */
+
+/* -- Impressum und Datenschutz (imprint.component.css, wortwoertlich) ----- */
+.legal h1 { margin-top: 24px; margin-bottom: 8px; font-weight: bold; }
+.legal h2 { margin-top: 18px; margin-bottom: 8px; font-weight: bold; }
+.legal h3 { margin-top: 12px; margin-bottom: 8px; font-weight: bold; }
+.legal h4 { margin-top: 8px;  margin-bottom: 4px; font-weight: bold; }
+.legal .first-headline { margin-top: initial; }
+.legal p { text-align: justify; }
+
+/* -- Geschaeftsbedingungen (terms-and-conditions.component.css) ----------- */
+.terms h1 {
+  margin-top: 24px; margin-bottom: 8px;
+  font-weight: var(--font-weight-semibold);  /* font-semibold aus dem Markup */
+}
+.terms #headline { margin-top: initial; }
+.terms p { text-align: justify; }            /* text-justify aus dem Markup */
+
+/* -- Cave Map (cave-map.component.css, wortwoertlich) --------------------- */
+.cavemap h1 { font-size: 1.875rem; line-height: 2.25rem; font-weight: 700; margin-bottom: 1rem; }
+.cavemap h2 { font-size: 1.5rem; line-height: 2rem; font-weight: 600; margin-bottom: 0.5rem; }
+.cavemap p  { margin-bottom: 1rem; }
+
+/* -- Weiterleitungs- und 404-Seiten -------------------------------------- */
+.redirect { padding: var(--sp-6); text-align: center; }
