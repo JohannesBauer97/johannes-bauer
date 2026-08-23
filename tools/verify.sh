@@ -23,7 +23,11 @@ done
 sec "C2  Kein JavaScript"
 for f in $ALL_HTML; do
   [ -f "$f" ] || continue
-  if grep -qi '<script' "$f"; then bad "$f enthaelt <script>"; else ok "$f"; fi
+  reason=""
+  grep -qi '<script'                 "$f" && reason="$reason <script>"
+  grep -qiE '[[:space:]]on[a-z]+='   "$f" && reason="$reason inline-event-handler"
+  grep -qi 'javascript:'             "$f" && reason="$reason javascript:-URL"
+  if [ -z "$reason" ]; then ok "$f"; else bad "$f enthaelt:$reason"; fi
 done
 
 sec "C3  Keine Angular-Reste"
@@ -58,6 +62,18 @@ for f in $PAGES; do
   grep -q 'name="viewport"'            "$f" || miss="$miss viewport"
   grep -qE '<html lang="(de|en)"'      "$f" || miss="$miss lang"
   if [ -z "$miss" ]; then ok "$f"; else bad "$f fehlt:$miss"; fi
+
+  # Werteabgleich: canonical/og:url muessen auf die eigene URL der Seite zeigen,
+  # nicht nur irgendeine vorhanden sein.
+  case "$f" in
+    index.html)     url="https://johannes-bauer.de/" ;;
+    */index.html)   dir="${f%/index.html}"; url="https://johannes-bauer.de/$dir/" ;;
+    *)              url="" ;;
+  esac
+  if grep -q "rel=\"canonical\" href=\"$url\"" "$f"
+  then ok "$f canonical -> $url"; else bad "$f canonical zeigt nicht auf $url"; fi
+  if grep -q "property=\"og:url\" content=\"$url\"" "$f"
+  then ok "$f og:url -> $url"; else bad "$f og:url zeigt nicht auf $url"; fi
 done
 
 sec "C6  Grundmetadaten der 404-Seite"
@@ -90,6 +106,25 @@ for f in $ALL_HTML; do
     case "$src" in http*) continue ;; /*) t="${src#/}" ;; *) t="$src" ;; esac
     if [ -f "$t" ]; then ok "$f -> $src"; else bad "$f -> $src fehlt"; fi
   done
+done
+
+sec "C8b <img> hat alt-Attribut"
+for f in $ALL_HTML; do
+  [ -f "$f" ] || continue
+  # <img>-Tags koennen ueber mehrere Zeilen laufen (z.B. partywheel/index.html);
+  # Zeilenumbrueche vor der Suche zu Leerzeichen normalisieren, damit jedes Tag
+  # als eine logische Einheit erfasst wird.
+  imgs=$(tr '\n' ' ' < "$f" | grep -oE '<img[^>]*>')
+  if [ -n "$imgs" ]; then
+    while IFS= read -r tag; do
+      [ -z "$tag" ] && continue
+      if printf '%s' "$tag" | grep -qE '[[:space:]]alt='; then
+        ok "$f: <img> hat alt"
+      else
+        bad "$f: <img> ohne alt-Attribut ($tag)"
+      fi
+    done <<< "$imgs"
+  fi
 done
 
 sec "C9  Redirect-Seiten"
@@ -137,7 +172,7 @@ else ok "src/johannes-bauer entfernt"; fi
 if [ -f .github/workflows/deploy-gh.yml ]; then
   if grep -qE 'setup-node|npm |ng build' .github/workflows/deploy-gh.yml
   then bad "Workflow enthaelt noch Build-Schritte"; else ok "Workflow ohne Build"; fi
-  if grep -q 'rm -rf .git .github docs tools' .github/workflows/deploy-gh.yml
+  if grep -q 'rm -rf .git .github docs tools .superpowers' .github/workflows/deploy-gh.yml
   then ok "Strip-Liste vollstaendig"; else bad "Strip-Liste fehlt/unvollstaendig"; fi
 else bad "Workflow fehlt"; fi
 
