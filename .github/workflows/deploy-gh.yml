@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Nicht-Website-Dateien entfernen
-        run: rm -rf .git .github docs tools
+        run: rm -rf .git .github docs tools .superpowers
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
