@@ -641,6 +641,7 @@ Die Seiten-Scopes übernehmen die heutigen Komponenten-CSS-Dateien wörtlich:
 | `.legal` | `src/johannes-bauer/src/app/imprint/imprint.component.css` (identisch zu `privacy.component.css`) |
 | `.terms` | `src/johannes-bauer/src/app/terms-and-conditions/terms-and-conditions.component.css` |
 | `.cavemap` | `src/johannes-bauer/src/app/cave-map/cave-map.component.css` |
+| `.app-page li` | `daylight.component.css` und `wheel-of-drinking.component.css` — beide enthalten `li { padding: 3px 0 3px 0 }`. Laundry hat kein eigenes CSS und keine `<li>`. |
 
 Beispiel für `.legal` — die Regeln werden mit dem Scope präfixiert:
 
